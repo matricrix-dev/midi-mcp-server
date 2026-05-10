@@ -1,32 +1,64 @@
-# AGENTS.md
+# Agent Development Guide
 
-## Dev Commands
+This project includes a Senior Node.js/TypeScript Developer agent configuration to assist with development tasks.
 
-```bash
-npm run build       # Full build: clean -> build:ui (Vite) -> build:server (tsc)
-npm run build:ui    # Vite builds MCP App preview HTML to dist/
-npm run build:server # tsc + copies src/resources -> build/resources
-npm test            # vitest run
-npm run lint        # eslint
-npm run format:check # prettier
-npm run deploy      # wrangler deploy (Cloudflare Workers)
+## Agent Configuration
+
+The agent configuration is located in `.agent/`:
+- `.agent/prompts.md` — Role definition and project context
+- `.agent/tasks.md` — Task templates for common operations
+- `.agent/review-guidelines.md` — Code review checklist
+
+## Using the Agent
+
+Invoke the agent using the Task tool with `subagent_type: "explore"` (for research/analysis) or `"general"` (for implementation/writing).
+
+### Example: Code Review
+
+```
+Use Task tool with:
+- description: "Code review"
+- prompt: "Review src/server.ts for code quality, TypeScript best practices, and potential bugs. Focus on the generateMidiBase64 function and MCP tool registration."
+- subagent_type: "explore"
 ```
 
-## Build Order Matters
+### Example: Bug Investigation
 
-`npm run build` runs: `clean` → `build:ui` → `build:server`
-- `build:server` copies `src/resources/*.md` → `build/resources/` (music theory docs)
-- `build:ui` outputs to `dist/` (NOT `build/`)
-- `server.ts` loads the built HTML from `dist/src/mcp-app.html` at module level — if `build:ui` hasn't run, preview UI will show a fallback message
-- CI order: `lint` → `format:check` → `test` → `test:coverage` → `build`
+```
+Use Task tool with:
+- description: "Debug build error"
+- prompt: "The build is failing with: [error]. Run npm run build and analyze the output. Identify the root cause and suggest a fix."
+- subagent_type: "explore"
+```
 
-## Architecture
+## Quick Commands
 
-- Entry: `src/index.ts` — handles `--http`, `--port=N`, or stdio mode
-- Server: `src/server.ts` — `createServer()` factory, registers MCP tools and resources
-- `@tonejs/midi` is CJS-only; loaded via `createRequire` in `src/server.ts`
-- Music theory resources live in `src/resources/*.md`, served via MCP resources
+| Task | Command |
+|------|---------|
+| Full CI locally | `npm run ci` |
+| Type check | `npm run typecheck` |
+| Lint | `npm run lint` |
+| Tests | `npm test` |
+| Coverage | `npm run test:coverage` |
+| Full build | `npm run build` |
 
-## tsconfig Quirk
+## Agent Tasks
 
-`tsconfig.json` excludes `src/worker.ts`, `src/mcp-app.ts`, and `src/mcp-app.html` from compilation. These are for Cloudflare Workers and the MCP App preview, handled separately by Vite/Wrangler.
+See `.agent/tasks.md` for pre-defined task templates including:
+- Code review
+- Bug investigation
+- Feature implementation
+- Test coverage analysis
+- Build debugging
+- Refactoring
+
+## Review Guidelines
+
+Before submitting code for review, ensure:
+- [ ] `npm run ci` passes (lint + format + test + build)
+- [ ] No TypeScript errors
+- [ ] Tests pass with > 80% coverage
+- [ ] New features have tests
+- [ ] No hardcoded secrets
+
+See `.agent/review-guidelines.md` for detailed checklist.

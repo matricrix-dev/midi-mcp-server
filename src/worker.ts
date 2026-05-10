@@ -77,19 +77,32 @@ interface MidiComposition {
  */
 function durationToBeats(duration: string): number {
   switch (duration) {
-    case '1':   return 4;
-    case '2':   return 2;
-    case '4':   return 1;
-    case '8':   return 0.5;
-    case '16':  return 0.25;
-    case '32':  return 0.125;
-    case '64':  return 0.0625;
-    case 'd1':  return 6;
-    case 'd2':  return 3;
-    case 'd4':  return 1.5;
-    case 'd8':  return 0.75;
-    case 'd16': return 0.375;
-    case 'dd4': return 1.75;
+    case '1':
+      return 4;
+    case '2':
+      return 2;
+    case '4':
+      return 1;
+    case '8':
+      return 0.5;
+    case '16':
+      return 0.25;
+    case '32':
+      return 0.125;
+    case '64':
+      return 0.0625;
+    case 'd1':
+      return 6;
+    case 'd2':
+      return 3;
+    case 'd4':
+      return 1.5;
+    case 'd8':
+      return 0.75;
+    case 'd16':
+      return 0.375;
+    case 'dd4':
+      return 1.75;
     default: {
       if (duration.startsWith('T')) return durationToBeats(duration.slice(1)) * (2 / 3);
       return 1;
@@ -178,7 +191,8 @@ const MUSIC_THEORY_RESOURCES = [
   {
     name: 'Counterpoint',
     uri: 'music-theory://counterpoint',
-    description: "Species counterpoint rules (Fux's five species), consonance/dissonance, motion types",
+    description:
+      "Species counterpoint rules (Fux's five species), consonance/dissonance, motion types",
     content: counterpointMd,
   },
   {
@@ -196,7 +210,8 @@ const MUSIC_THEORY_RESOURCES = [
   {
     name: 'Rhythm Patterns',
     uri: 'music-theory://rhythm-patterns',
-    description: 'Time signatures, MIDI duration reference, genre grooves, velocity and tempo guides',
+    description:
+      'Time signatures, MIDI duration reference, genre grooves, velocity and tempo guides',
     content: rhythmPatternsMd,
   },
   {
@@ -346,7 +361,7 @@ function createWorkerServer(): Server {
       try {
         const typedArgs = args as { title: string; composition: MidiComposition };
         const composition = preprocessComposition(typedArgs.composition);
-        const midiBase64 = generateMidiBase64(composition);
+        const _midiBase64 = generateMidiBase64(composition);
 
         return {
           content: [

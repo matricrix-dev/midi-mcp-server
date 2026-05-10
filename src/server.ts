@@ -62,7 +62,8 @@ const MUSIC_THEORY_RESOURCES = [
   {
     name: 'Counterpoint',
     uri: 'music-theory://counterpoint',
-    description: "Species counterpoint rules (Fux's five species), consonance/dissonance, motion types",
+    description:
+      "Species counterpoint rules (Fux's five species), consonance/dissonance, motion types",
     file: 'counterpoint.md',
   },
   {
@@ -80,7 +81,8 @@ const MUSIC_THEORY_RESOURCES = [
   {
     name: 'Rhythm Patterns',
     uri: 'music-theory://rhythm-patterns',
-    description: 'Time signatures, MIDI duration reference, genre grooves, velocity and tempo guides',
+    description:
+      'Time signatures, MIDI duration reference, genre grooves, velocity and tempo guides',
     file: 'rhythm-patterns.md',
   },
   {
@@ -130,19 +132,32 @@ export interface MidiComposition {
  */
 function durationToBeats(duration: string): number {
   switch (duration) {
-    case '1':   return 4;      // 全音符
-    case '2':   return 2;      // 二分音符
-    case '4':   return 1;      // 四分音符
-    case '8':   return 0.5;    // 八分音符
-    case '16':  return 0.25;   // 十六分音符
-    case '32':  return 0.125;  // 三十二分音符
-    case '64':  return 0.0625; // 六十四分音符
-    case 'd1':  return 6;      // 付点全音符 (4 × 1.5)
-    case 'd2':  return 3;      // 付点二分音符 (2 × 1.5)
-    case 'd4':  return 1.5;    // 付点四分音符 (1 × 1.5)
-    case 'd8':  return 0.75;   // 付点八分音符 (0.5 × 1.5)
-    case 'd16': return 0.375;  // 付点十六分音符 (0.25 × 1.5)
-    case 'dd4': return 1.75;   // ダブル付点四分音符 (1 + 0.5 + 0.25)
+    case '1':
+      return 4; // 全音符
+    case '2':
+      return 2; // 二分音符
+    case '4':
+      return 1; // 四分音符
+    case '8':
+      return 0.5; // 八分音符
+    case '16':
+      return 0.25; // 十六分音符
+    case '32':
+      return 0.125; // 三十二分音符
+    case '64':
+      return 0.0625; // 六十四分音符
+    case 'd1':
+      return 6; // 付点全音符 (4 × 1.5)
+    case 'd2':
+      return 3; // 付点二分音符 (2 × 1.5)
+    case 'd4':
+      return 1.5; // 付点四分音符 (1 × 1.5)
+    case 'd8':
+      return 0.75; // 付点八分音符 (0.5 × 1.5)
+    case 'd16':
+      return 0.375; // 付点十六分音符 (0.25 × 1.5)
+    case 'dd4':
+      return 1.75; // ダブル付点四分音符 (1 + 0.5 + 0.25)
     default: {
       // 三連符: 'T4' → 四分音符三連符 (2/3 beat), 'T8' → 八分音符三連符 (1/3 beat)
       if (duration.startsWith('T')) {
@@ -212,8 +227,16 @@ export function generateMidiBase64(composition: MidiComposition): string {
 
 // ---------- Composition Preprocessing ----------
 
-function preprocessComposition(raw: MidiComposition): MidiComposition {
-  const composition = JSON.parse(JSON.stringify(raw)) as MidiComposition;
+function preprocessComposition(raw: unknown): MidiComposition {
+  let rawObj: unknown;
+  if (typeof raw === 'string') {
+    rawObj = JSON.parse(raw);
+  } else if (typeof raw === 'object' && raw !== null) {
+    rawObj = raw;
+  } else {
+    throw new Error('composition must be an object or JSON string');
+  }
+  const composition = JSON.parse(JSON.stringify(rawObj)) as MidiComposition;
 
   if (!composition.bpm && composition.tempo) {
     composition.bpm = composition.tempo;
@@ -316,7 +339,7 @@ export function createServer(): McpServer {
     },
     async ({ title, composition: rawComposition }: { title: string; composition: unknown }) => {
       try {
-        const composition = preprocessComposition(rawComposition as MidiComposition);
+        const composition = preprocessComposition(rawComposition);
         const midiBase64 = generateMidiBase64(composition);
 
         return {

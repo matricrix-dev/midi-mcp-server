@@ -25,6 +25,39 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for AI
 
 ---
 
+## Architecture
+
+```
+midi-mcp-server/
+├── src/
+│   ├── index.ts           # Entry point, transport handling (stdio/HTTP)
+│   ├── server.ts          # MCP server, tools, resources, MIDI generation
+│   ├── chord-utils.ts     # Chord parsing, pitch resolution, note conversion
+│   ├── mcp-app.ts         # Client-side UI: playback, rendering, audio
+│   ├── mcp-app.html       # UI HTML template
+│   ├── mcp-app.css        # UI styles
+│   ├── worker.ts          # Cloudflare Worker entry
+│   ├── resources/         # Music theory markdown documents
+│   └── __tests__/         # Vitest test files
+├── build/                 # Compiled TypeScript server output
+├── dist/                  # Vite build UI output
+├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+└── wrangler.toml
+```
+
+**Key modules:**
+
+| Module | Responsibility |
+|--------|---------------|
+| `index.ts` | CLI argument parsing, transport initialization, health endpoint |
+| `server.ts` | MCP tool/resource registration, MIDI generation pipeline |
+| `chord-utils.ts` | Note name parsing, chord expansion, duration normalization |
+| `mcp-app.ts` | SVG piano-roll rendering, Web Audio playback (soundfont + oscillator fallback) |
+
+---
+
 ## Deployment Options
 
 ### Option A — Remote (Cloudflare Workers)
@@ -96,8 +129,8 @@ Generate a MIDI file from structured composition data. Returns base64-encoded MI
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `title` | `string` | ✓ | Title of the composition |
-| `composition` | `object` | ✓ | Composition data (see schema below) |
+| `title` | `string` | Yes | Title of the composition |
+| `composition` | `object` | Yes | Composition data (see schema below) |
 
 **Output** (structured content)
 
@@ -118,7 +151,7 @@ Parse a chord name and return its component MIDI pitches and note names. Useful 
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `chord` | `string` | ✓ | Chord name, e.g. `"Cmaj7"`, `"F#m7"`, `"G7sus4"` |
+| `chord` | `string` | Yes | Chord name, e.g. `"Cmaj7"`, `"F#m7"`, `"G7sus4"` |
 | `octave` | `number` | — | Root octave (default: `4`) |
 
 **Output example**
@@ -228,6 +261,22 @@ MCP clients that support resource reading can pass these to the AI as context, e
 
 ---
 
+## Interactive Preview UI
+
+The MCP App UI provides:
+
+- **Piano-roll visualization**: SVG-based note display showing pitch and timing
+- **Audio playback**: Dual-mode system
+  - Primary: HD soundfont audio (MusyngKite)
+  - Fallback: Web Audio oscillator synthesis
+- **Playback controls**: Play, Stop, progress indicator
+- **Download**: Direct MIDI file download
+- **Continue composition**: Send message back to AI for extending the piece
+- **Chord analyzer**: Interactive chord parsing tool
+- **Theory reference**: In-app music theory document viewer
+
+---
+
 ## Example Composition
 
 ```javascript
@@ -276,23 +325,49 @@ https://github.com/user-attachments/assets/e20ebef0-fdbf-4e72-910d-41b94183f9d9
 
 ## Build & Development
 
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Commands
+
 ```bash
+# Install dependencies
 npm install
 
 # Full build (UI + server)
 npm run build
 
 # Build steps individually
-npm run build:ui     # Vite — builds the MCP App preview HTML
-npm run build:server # tsc — compiles TypeScript server
+npm run build:ui     # Vite — builds the MCP App preview HTML to dist/
+npm run build:server # tsc — compiles TypeScript + copies resources
+
+# Run development server
+npm start            # Run built server
+npm run start:stdio  # Run in stdio mode
+npm run start:http   # Run in HTTP mode (port 3001)
 
 # Deploy to Cloudflare Workers
 npm run deploy
+npm run build:worker # Dry-run deployment
 
-# Run tests
-npm test
-npm run test:coverage
+# Testing
+npm test             # Run vitest
+npm run test:watch   # Watch mode
+npm run test:coverage # With coverage report
+
+# Code quality
+npm run lint         # ESLint
+npm run lint:fix     # ESLint auto-fix
+npm run format:check # Prettier check
+npm run format       # Prettier write
 ```
+
+### Build Output
+
+- `build/` — Compiled server (index.js, server.js, chord-utils.js, resources/)
+- `dist/` — Vite-built UI (mcp-app.html)
 
 ---
 
@@ -302,7 +377,21 @@ npm run test:coverage
 |---------|---------|
 | `@modelcontextprotocol/sdk` | MCP server implementation (stdio & HTTP transports) |
 | `@modelcontextprotocol/ext-apps` | MCP Apps extension — interactive UI in conversation |
-| `midi-writer-js` | MIDI file generation |
-| `@tonejs/midi` | MIDI parsing (preview UI) |
-| `soundfont-player` | Audio playback in preview UI |
+| `@tonejs/midi` | MIDI parsing and generation |
+| `soundfont-player` | HD audio playback in preview UI (MusyngKite) |
 | `zod` | Input schema validation |
+
+---
+
+## Requirements
+
+Detailed specifications are available in the `.requirements/` folder:
+
+- **PRD.md** — Product Requirements Document (features, user stories, roadmap)
+- **TRD.md** — Technical Requirements Document (architecture, APIs, deployment)
+
+---
+
+## License
+
+MIT
