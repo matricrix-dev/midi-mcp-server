@@ -1,90 +1,90 @@
-# 実践的な作曲のための音楽理論ルール
+# Practical Music Theory Rules for Composition
 
-音楽理論を実践的な作曲に活かすためのルールとテクニックをまとめました。これらの指針は創作過程を助け、表現力豊かな楽曲を生み出すための基盤となります。
+I have summarized rules and techniques for applying music theory to practical composition. These guidelines help the creative process and serve as a foundation for creating expressive music.
 
-## 楽曲構造と開発テクニック
+## Song Structure and Development Techniques
 
-**メロディ開発の基本原則**
-- 「3の法則」を活用する：メロディを提示し、繰り返しまたは変化させ、異なる方向に展開する[8]
-- モチーフの変形技法を使う：
-    - 徐々に変形（gradual metamorphosis）：小さな変化を積み重ねる
-    - 突然の変形（sudden metamorphosis）：大きく変化させる
-    - 装飾（decoration）：音程やリズムで元のメロディを装飾する
+**Basic Principles of Melody Development**
+- Utilize the "Rule of Three": Present a melody, repeat or vary it, and develop it in a different direction [8]
+- Use motif transformation techniques:
+    - Gradual metamorphosis: Accumulate small changes
+    - Sudden metamorphosis: Make large changes
+    - Decoration: Decorate the original melody with intervals or rhythms
 
-**フレージングと拡張テクニック**
-- アンテセデント/コンセクエント（前楽節/後楽節）構造を活用する
-- 断片化と拡張：メロディの一部を取り出し、シーケンスや転回で拡張する
-- 終止的拡張：シーケンスなどを使って解決を遅らせる
-- 内部拡張（interpolation）：メロディの途中に新しい要素を挿入する
+**Phrasing and Extension Techniques**
+- Utilize antecedent/consequent (question/answer) structure
+- Fragmentation and extension: Extract part of a melody and extend it with sequences or inversions
+- Cadential extension: Use sequences to delay resolution
+- Internal extension (interpolation): Insert new elements in the middle of the melody
 
-## 和声と調性の活用法
+## Harmony and Tonality Utilization
 
-**効果的な和声進行**
-- 緊張と緩和のバランスを意識した和声進行を作る
-- 主要和音（I、IV、V）を骨格として、副次的和音で色付けする
-- 非和声音（経過音、刺繍音、保続音など）を使って動きを加える
+**Effective Harmonic Progressions**
+- Create harmonic progressions that balance tension and release
+- Use primary chords (I, IV, V) as the skeleton, and color with secondary chords
+- Add movement with non-chord tones (passing tones, neighbor tones, suspensions, etc.)
 
-**調性と転調の技法**
-- 平行調、同主調、5度圏の関係調への転調を活用する
-- モード（教会旋法）を使って色彩感を変える
-- ペダルポイント（持続音）を使って調性感を強調または曖昧にする
+**Tonality and Modulation Techniques**
+- Utilize modulation to parallel keys, relative keys, and keys related by the circle of fifths
+- Use modes (church modes) to change the color
+- Use pedal points (drone notes) to emphasize or obscure tonality
 
-## 作曲アプローチとワークフロー
+## Composition Approach and Workflow
 
-**効果的な作曲の始め方**
-- 目的を明確にする：録音用、記念、トリビュート、コンペなど
-- 曲の性格を先に決める：愛の歌、エッジの効いた曲、伝統的、ブルージーなど
-- 作曲の出発点を選ぶ：
-    - コード優先：和声から始める
-    - リード優先：メロディから始める
-    - リズム優先（ペガサス法）：リズムを先に決める
+**Effective Ways to Start Composing**
+- Clarify the purpose: For recording, commemorative, tribute, competition, etc.
+- Decide the character of the song first: Love song, edgy song, traditional, bluesy, etc.
+- Choose a starting point for composition:
+    - Chord-first: Start with harmony
+    - Lead-first: Start with melody
+    - Rhythm-first (Pegasus method): Decide rhythm first
 
-**形式と構造**
-- 曲の形式を事前に計画する：イントロ、ブリッジ、コーダなどのセクション
-- 和声リズム（harmonic rhythm）を決める：
-    - 長い持続（1小節以上）
-    - 短い持続（1小節未満）
-    - または両方の組み合わせ
+**Form and Structure**
+- Plan the song form in advance: Sections like intro, bridge, coda
+- Decide the harmonic rhythm:
+    - Long durations (1 measure or more)
+    - Short durations (less than 1 measure)
+    - Or a combination of both
 
-## ポップス作曲の基本テクニック
+## Basic Techniques for Pop Composition
 
-**効果的なコード進行**
-- ポップスでは、メジャーコードにマイナーコードを少し加えた進行が定番です。例えば、Eマイナー、Gメジャー、Dメジャー、Aメジャーなどの組み合わせがよく使われます[5]
-- フックを中心に曲を構築する方法も効果的です。ギターやピアノのリフをメインテーマとして使い、その周りにコードとメロディを組み立てていきます[2]
+**Effective Chord Progressions**
+- In pop music, progressions that mix major chords with a few minor chords are standard. For example, combinations like E minor, G major, D major, A major are commonly used [5]
+- Building a song around a hook is also effective. Use guitar or piano riffs as the main theme, and build chords and melody around them [2]
 
-**ポップス曲の構造**
-- イントロ、ヴァース、プリコーラス、コーラス、ブリッジ、アウトロという構造が基本です
-- プリコーラスはヴァースとコーラスの間に位置し、期待感を高め、両者をスムーズにつなぐ役割を果たします[7]
-- フックは歌詞でも楽器でもよく、リスナーの頭に残る繰り返しのフレーズです[7]
+**Pop Song Structure**
+- The basic structure is intro, verse, pre-chorus, chorus, bridge, outro
+- The pre-chorus is positioned between verse and chorus, building anticipation and smoothly connecting the two [7]
+- A hook can be lyrics or instruments, a repeating phrase that sticks in the listener's head [7]
 
-**作曲アプローチ**
-1. コードから始める方法
-2. メロディラインから始める方法
-3. グルーヴから始める方法（特に電子音楽プロデューサーとの共同作業に適しています）[2]
+**Composition Approaches**
+1. Starting from chords
+2. Starting from melody lines
+3. Starting from groove (especially suitable for collaboration with electronic music producers) [2]
 
-## 実践的なMIDI作曲テクニック
+## Practical MIDI Composition Techniques
 
-**MIDIを活用した編曲**
-- コード進行とボーカルトップラインができたら、ベース、キー、シンセ、ドラムなどの楽器を追加し
-- アルペジオ技法を活用すると曲に新しい命を吹き込めます。コードの音を一つずつ順番に演奏するこの技法は、ギター、ベース、ボーカルなどで効果的です[5]
+**Arrangement Using MIDI**
+- Once you have chord progressions and vocal topline, add instruments like bass, keys, synth, drums
+- Utilizing arpeggio techniques can breathe new life into a song. This technique of playing chord tones one by one in sequence is effective on guitar, bass, vocals, etc. [5]
 
-これらのテクニックを組み合わせることで、魅力的なポップスやボカロ曲を作ることができます。最終的には、理論的な知識を基盤としつつも、自分の音楽的直感と創造性を大切にしましょう。
+By combining these techniques, you can create attractive pop or vocaloid songs. Ultimately, while basing yourself on theoretical knowledge, cherish your own musical intuition and creativity.
 
-## 実践的なテクニック
+## Practical Techniques
 
-**動機開発の方法**
-- シーケンス：同じパターンを異なる音程で繰り返す
-- 転回：メロディラインを上下逆にする
-- 逆行：メロディを後ろから前に演奏する
-- 拡大/縮小：音程やリズム値を拡大または縮小する
+**Motivic Development Methods**
+- Sequence: Repeat the same pattern at different pitches
+- Inversion: Reverse the melody line up and down
+- Retrograde: Play the melody backwards
+- Augmentation/diminution: Expand or contract intervals or rhythmic values
 
-**表現力を高める要素**
-- 対比を意識する：強弱、速度、音色、テクスチャー
-- リズムのバリエーション：シンコペーション、多拍子、拍子変化を取り入れる
-- 音色設計：楽器の特性を理解し、適切な音域と組み合わせを選ぶ
+**Elements to Enhance Expressiveness**
+- Be conscious of contrast: Dynamics, tempo, timbre, texture
+- Rhythmic variations: Incorporate syncopation, polyrhythms, time signature changes
+- Timbre design: Understand instrument characteristics and choose appropriate ranges and combinations
 
-## MIDI作曲のための特別なガイドライン
+## Special Guidelines for MIDI Composition
 
-- ベロシティの変化を付けて人間らしい表現を追加する
-- 音符のスタートタイムに微妙なずれを入れて自然な演奏感を出す]
-- 適切な音の長さ（duration）を設定して、フレージングを表現する
+- Add human-like expression by varying velocity
+- Create natural performance feel by adding subtle timing variations to note start times
+- Express phrasing by setting appropriate note durations

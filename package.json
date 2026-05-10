@@ -5,9 +5,9 @@
   "main": "build/index.js",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf build dist",
+    "clean": "powershell -Command \"Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue\"",
     "build:ui": "vite build --config vite.config.mcp-app.ts",
-    "build:server": "tsc && chmod +x build/index.js && cp -r src/resources build/resources",
+    "build:server": "tsc && Copy-Item -Recurse src/resources build/resources",
     "build": "npm run clean && npm run build:ui && npm run build:server",
     "build:worker": "npx wrangler deploy --dry-run --outdir=dist-worker",
     "start": "node build/index.js",
@@ -20,8 +20,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "^1.3.2",
