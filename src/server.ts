@@ -6,7 +6,7 @@ import {
   RESOURCE_MIME_TYPE,
 } from '@modelcontextprotocol/ext-apps/server';
 import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
+import { join, dirname, basename } from 'path';
 import { z } from 'zod';
 // @tonejs/midi is CJS-only; use createRequire so Node.js ESM can load it at runtime.
 // (Vite/vitest resolve the "module" field in package.json, which is ESM — tests pass either way.)
@@ -22,6 +22,8 @@ import {
   parseChordName,
   midiNumberToNoteName,
 } from './chord-utils.js';
+import * as fs from 'fs';
+import * as os from 'os';
 
 // ---------- Load built HTML at module level ----------
 
@@ -43,6 +45,36 @@ function loadResource(filename: string): string {
     return readFileSync(join(__dirname, 'resources', filename), 'utf-8');
   } catch {
     return `# Resource Not Found\n\nCould not load ${filename}.`;
+  }
+}
+
+function saveMidiToFile(midiBase64: string, filename: string): string {
+  try {
+    let outputPath: string;
+    const isAbsolutePath = /^[a-zA-Z]:[/\\]/.test(filename) || filename.startsWith('/');
+    if (isAbsolutePath) {
+      const dir = dirname(filename);
+      console.error('Saving to absolute path:', dir);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      outputPath = filename.endsWith('.mid')
+        ? filename
+        : join(dir, `${basename(filename, '.mid')}.mid`);
+    } else {
+      const safeBaseDir = process.env.HOME || process.env.USERPROFILE || os.tmpdir();
+      const midiDir = join(safeBaseDir, 'midi-files');
+      if (!fs.existsSync(midiDir)) {
+        fs.mkdirSync(midiDir, { recursive: true });
+      }
+      outputPath = join(midiDir, filename.endsWith('.mid') ? filename : `${filename}.mid`);
+    }
+    fs.writeFileSync(outputPath, Buffer.from(midiBase64, 'base64'), 'binary');
+    return outputPath;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error saving MIDI file:', error);
+    throw new Error(`Failed to save MIDI file: ${errorMessage}`);
   }
 }
 
@@ -203,10 +235,11 @@ export function generateMidiBase64(composition: MidiComposition): string {
       // velocity: @tonejs/midi は 0.0〜1.0 の正規化値
       const velocity = Math.min(1, Math.max(0, (note.velocity ?? 100) / 127));
 
-      // 開始時間（秒）: beat は 1 始まりなので -1 してからbeats→秒変換
+      // 開始時間（秒）: beat は 0 始まり（最初の音符は beat: 0）
+      // 1 始まりとして扱う場合は beat: 1 開始とする
       const timeSec =
         note.beat !== undefined
-          ? (note.beat - 1) * secondsPerBeat
+          ? note.beat * secondsPerBeat
           : (note.startTime ?? note.time ?? 0);
 
       // 和音（複数ピッチ）は同一 time に複数ノートを追加
@@ -312,13 +345,14 @@ export function createServer(): McpServer {
   }));
 
   // --- Register App Tool: create_midi ---
+  // Register with both names to support opencode's naming convention (midi-mcp__custom__create_midi)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (registerAppTool as any)(
     server,
-    'create_midi',
+    'midi-mcp__custom__create_midi',
     {
       title: 'Create MIDI',
-      description: `Generate a MIDI file from structured composition data with chord support.\nSupports single notes, note arrays (chords), and chord names (${chordQualities.slice(0, 10).join(', ')}, etc.).\nReturns base64-encoded MIDI data and displays an interactive preview with piano-roll notation and playback.`,
+      description: `Generate a MIDI file from structured composition data with chord support.\nSupports single notes, note arrays (chords), and chord names (${chordQualities.slice(0, 10).join(', ')}, etc.).\nReturns base64-encoded MIDI data and displays an interactive preview with piano-roll notation and playback.\n\nOptionally save the file to disk by providing a filename in saveToFile (e.g., "song.mid" or "my-composition").`,
       inputSchema: {
         title: z.string().describe('Title of the composition'),
         composition: z
@@ -326,42 +360,74 @@ export function createServer(): McpServer {
           .describe(
             'Composition object with bpm (number), optional timeSignature ({numerator, denominator}), and tracks (array of {name?, instrument?, notes: [{pitch, chord?, beat?, startTime?, duration, velocity?, channel?}]})'
           ),
+        saveToFile: z
+          .string()
+          .optional()
+          .describe(
+            'Optional filename to save the MIDI file to disk (e.g., "song.mid" or "my-composition"). Files are saved to ~/midi-files/'
+          ),
       },
       outputSchema: z.object({
         midiBase64: z.string(),
         title: z.string(),
         bpm: z.number(),
         trackCount: z.number(),
+        filePath: z.string().optional().describe('Absolute path where the MIDI file was saved'),
       }),
       _meta: {
         ui: { resourceUri: RESOURCE_URI },
       },
     },
-    async ({ title, composition: rawComposition }: { title: string; composition: unknown }) => {
+    async ({
+      title,
+      composition: rawComposition,
+      saveToFile,
+    }: {
+      title: string;
+      composition: unknown;
+      saveToFile?: string;
+    }) => {
       try {
         const composition = preprocessComposition(rawComposition);
         const midiBase64 = generateMidiBase64(composition);
+
+        const response: {
+          midiBase64: string;
+          title: string;
+          bpm: number;
+          trackCount: number;
+          filePath?: string;
+        } = {
+          midiBase64,
+          title,
+          bpm: composition.bpm,
+          trackCount: composition.tracks.length,
+        };
+
+        if (saveToFile) {
+          const safeFilename = saveToFile.replace(/[^a-zA-Z0-9_./-]/g, '_');
+          response.filePath = saveMidiToFile(midiBase64, safeFilename);
+        }
 
         return {
           content: [
             {
               type: 'text' as const,
-              text: `MIDI file "${title}" generated successfully. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`,
+              text: response.filePath
+                ? `MIDI file "${title}" generated successfully and saved to ${response.filePath}. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`
+                : `MIDI file "${title}" generated successfully. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`,
             },
           ],
-          structuredContent: {
-            midiBase64,
-            title,
-            bpm: composition.bpm,
-            trackCount: composition.tracks.length,
-          },
+          structuredContent: response,
         };
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error('MIDI generation error:', error);
         return {
           content: [
             {
               type: 'text' as const,
-              text: `Error generating MIDI: ${(error as Error).message}`,
+              text: `Error generating MIDI: ${errorMessage}`,
             },
           ],
           isError: true,

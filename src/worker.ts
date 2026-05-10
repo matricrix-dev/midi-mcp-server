@@ -135,7 +135,7 @@ function generateMidiBase64(composition: MidiComposition): string {
       const velocity = Math.min(1, Math.max(0, (note.velocity ?? 100) / 127));
       const timeSec =
         note.beat !== undefined
-          ? (note.beat - 1) * secondsPerBeat
+          ? note.beat * secondsPerBeat
           : (note.startTime ?? note.time ?? 0);
 
       pitches.forEach((pitch) => {
@@ -278,6 +278,11 @@ function createWorkerServer(): Server {
           type: 'object' as const,
           properties: {
             title: { type: 'string', description: 'Title of the composition' },
+            saveToFile: {
+              type: 'string',
+              description:
+                'Optional filename to save the MIDI file to disk (e.g., "song.mid" or "my-composition")',
+            },
             composition: {
               type: 'object',
               description: 'Composition data',
@@ -359,15 +364,27 @@ function createWorkerServer(): Server {
 
     if (name === 'create_midi') {
       try {
-        const typedArgs = args as { title: string; composition: MidiComposition };
+        const typedArgs = args as {
+          title: string;
+          composition: MidiComposition;
+          saveToFile?: string;
+        };
         const composition = preprocessComposition(typedArgs.composition);
-        const _midiBase64 = generateMidiBase64(composition);
+        const midiBase64 = generateMidiBase64(composition);
+
+        let filePath: string | undefined;
+        if (typedArgs.saveToFile) {
+          const safeFilename = typedArgs.saveToFile.replace(/[^a-zA-Z0-9_./-]/g, '_');
+          filePath = saveMidiToFile(midiBase64, safeFilename);
+        }
 
         return {
           content: [
             {
               type: 'text' as const,
-              text: `MIDI file "${typedArgs.title}" generated successfully. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`,
+              text: filePath
+                ? `MIDI file "${typedArgs.title}" generated successfully and saved to ${filePath}. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`
+                : `MIDI file "${typedArgs.title}" generated successfully. ${composition.tracks.length} track(s), ${composition.bpm} BPM.`,
             },
           ],
           _meta: { ui: { resourceUri: RESOURCE_URI } },

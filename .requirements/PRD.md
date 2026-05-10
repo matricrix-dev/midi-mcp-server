@@ -319,7 +319,9 @@ The server provides an interactive MCP App UI with:
 - [x] Multiple deployment modes
 - [x] Preview UI with playback
 - [x] Music theory resources
-
+- [x] Save MIDI files to disk (local mode)
+- [ ] Save MIDI files direct to disk parameter fodler (local mode)
+  
 ### 7.2 Phase 2 (v0.3.x) — Planned
 
 - [ ] MIDI file upload/parsing tool
